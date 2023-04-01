@@ -66,22 +66,34 @@ def io_only_prompt(task):
     prompt = preamble + input_output_example + "\n\nThe input grid is:\n" + str(input_grid) + "\n\nWhat is the output grid?"
     return prompt 
 
+def nothing_prompt(task):
+    
+    # instruction = "here is the instruction of how to transform the grid: \n"
+    # instruction += task['description']['description_input'] + task['description']['description_output_grid_size'] + task['description']['description_output']
+    
+    take_a_guess = "\n\n this is a very common grid pattern found in the ARC (abstraction and reasoning corpus). Even without telling the rule, you can try to take a best guess on what the output grid is:\n"
+
+    input_grid = task['problem']['test'][0]['input']
+
+    prompt = preamble + take_a_guess + "\n\nThe input grid is:\n" + str(input_grid) + "\n\nWhat is the output grid?"
+    return prompt 
+
 if __name__ == '__main__':
     import random 
 
     # open results/larc_gpt4.json
-    with open('results/larc_gpt4_newer.json') as json_file:
+    with open('results/larc_gpt4.json') as json_file:
         larc_gpt4 = json.load(json_file)
 
     print (len(larc_gpt4))
     
-    full_keys = ['nl_only', 'nl_and_io', 'io_only']
+    full_keys = ['nl_only', 'nl_and_io', 'io_only', 'nothing']
     for _ in range(10000000):
         # pick a random task
         r_id = random.randint(0, len(larc_gpt4)-1)
         task = larc_gpt4[r_id]
-        if len(task['gpt4']) < 3:
-            print (f"task {task['name']} has less than 3 gpt4 responses, try to make it up")
+        if len(task['gpt4']) < len(full_keys):
+            print (f"task {task['name']} has less than 4 gpt4 responses, try to make it up")
             print (task['gpt4'].keys())
             full_keys_shuffle = copy.deepcopy(full_keys)
             random.shuffle(full_keys_shuffle)
@@ -93,16 +105,21 @@ if __name__ == '__main__':
                         prompt = nl_and_io_prompt(task)
                     elif key == 'io_only':
                         prompt = io_only_prompt(task)
+                    elif key == 'nothing':
+                        prompt = nothing_prompt(task)
                     
                     print (prompt)
+
                     if len(prompt) > 8000:
                         print ("skipping this one, too long > 8000")
                         continue
-                    
+
                     with get_openai_callback() as cb:
                         ans = llm(prompt)
                         print("tokens used ", cb.total_tokens)
+                        print ("printing answer")
                         print (ans)
+                        print ("done printing answer")
 
                     task['gpt4'][key] = ans
 
