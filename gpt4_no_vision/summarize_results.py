@@ -1,7 +1,7 @@
 import json
 
 # open results/nl_only_task_with_gpt4.json
-with open('results/larc_gpt4_newer.json') as json_file:
+with open('results/larc_gpt4.json') as json_file:
     results = json.load(json_file)
 
 def grab_output(gpt4_response):
