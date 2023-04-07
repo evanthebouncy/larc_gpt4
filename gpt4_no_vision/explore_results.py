@@ -11,7 +11,8 @@ def render_task(task):
     desc_hash = str(hash(str(task['description'])))
     folder_name = name + '_' + desc_hash
     # make a folder in /drawings_tmp with this name
-    os.mkdir(f'drawings_tmp/{folder_name}')
+    if not os.path.exists(f'drawings_tmp/{folder_name}', ):
+        os.mkdir(f'drawings_tmp/{folder_name}')
 
     # draw the training input-output
     for example_id in range(len(task['problem']['train'])):
@@ -30,7 +31,6 @@ def render_task(task):
     description = str(task['description'])
     with open(f'drawings_tmp/{folder_name}/description.txt', 'w') as f:
         f.write(description)
-    
     # for the results in 'gpt4' / ['nl_only', 'nl_and_io', 'io_only', 'nothing']
     gpt4_results = task['gpt4']
     for result in gpt4_results:
@@ -68,7 +68,6 @@ if __name__ == '__main__':
 
     filter_condition = {'nl_only': True, 'nl_and_io': True, 'io_only': True, 'nothing': True}
     filter_condition = {'nl_only': True, 'nl_and_io': True, 'io_only': True}
-    
     for task in larc_gpt4:
 
         # this is optional
