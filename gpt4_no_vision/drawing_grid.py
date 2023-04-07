@@ -7,15 +7,26 @@ def get_gpt4_response_grid(gpt4_response):
         gpt4_response_grid = gpt4_response[gpt4_response.find("[[")+2:gpt4_response.find("]]")]
         # put the [[ and ]] back in, eval it into array
         gpt4_response_grid = eval("[[" + gpt4_response_grid + "]]")
+
+        # pad inner lists to all be the same length
+        max_len = max([len(row) for row in gpt4_response_grid])
+        gpt4_response_grid = [row + [0] * (max_len - len(row)) for row in gpt4_response_grid]
+
+        # if elements arent ints, return None
+        for row in gpt4_response_grid:
+            for element in row:
+                if not isinstance(element, int):
+                    return None
+
         return gpt4_response_grid
     except:
         return None
-    
+
 def display_grid(grid, save_name=None):
     grid = np.array(grid)
     # Example colors
     colors = ['#000', '#0074D9', '#FF4136', '#2ECC40', '#FFDC00', '#AAAAAA', '#F012BE', '#FF851B', '#7FDBFF', '#870C25', '#FAFAFA']
-    
+
     # Define color map for the numbers 0-9 using the colors from the previous example
     cmap = plt.cm.colors.ListedColormap(colors[:11])
 
