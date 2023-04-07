@@ -49,32 +49,32 @@ def generate_pdf(task_dict):
         for i in range(4):
             train_input_path = os.path.join(task_folder, f"train_input_{i}.png")
             train_output_path = os.path.join(task_folder, f"train_output_{i}.png")
-            train_input = create_image_if_exists(train_input_path, 100, 100)
-            train_output = create_image_if_exists(train_output_path, 100, 100)
+            train_input = create_image_if_exists(train_input_path, 133, 100)
+            train_output = create_image_if_exists(train_output_path, 133, 100)
             if train_input or train_output:
                 data.append([Paragraph("train", styles["Normal"]), train_input or Spacer(1, 1), train_output or Spacer(1, 1)])
 
         # Add test input
-        test_input = create_image_if_exists(os.path.join(task_folder, "test_input.png"), 100, 100)
+        test_input = create_image_if_exists(os.path.join(task_folder, "test_input.png"), 133, 100)
         data.append([Paragraph("test", styles["Normal"]), test_input, Spacer(1, 1)])
 
         # transpose data
         data = list(zip(*data))
 
         # add data to pdf
-        example_table = Table(data, colWidths=[100, 100]*4, rowHeights=[20, 100, 100], hAlign='LEFT')
+        example_table = Table(data, colWidths=[133]*4, rowHeights=[20, 100, 100], hAlign='LEFT')
         content.append(example_table)
 
         # Add GPT-4 generations
         content.append(Paragraph("GPT-4 Generations", styles["Heading3"]))
 
-        target_img = create_image_if_exists(os.path.join(task_folder, "test_output.png"), 100, 100)
+        target_img = create_image_if_exists(os.path.join(task_folder, "test_output.png"), 133, 100)
         img_path = os.path.join(task_folder, "gpt4_io_only.png")
-        io_only_img = create_image_if_exists(img_path, 100, 100)
+        io_only_img = create_image_if_exists(img_path, 133, 100)
 
         # Add row with target img and io_only img
         content.append(Table([["Target", "io_only"], [target_img, io_only_img]],
-                             colWidths=[100]*4, rowHeights=[20, 100],
+                             colWidths=[133]*4, rowHeights=[20, 100],
                              hAlign='LEFT'))
 
         # for each NL description, add row with nl_only and nl_and_io
@@ -89,7 +89,7 @@ def generate_pdf(task_dict):
 
             for filename, label in gpt4_images:
                 img_path = os.path.join(nl_task_folder, filename)
-                img = create_image_if_exists(img_path, 100, 100)
+                img = create_image_if_exists(img_path, 133, 100)
                 gpt4_labels.append(Paragraph(label, styles["Normal"]))
                 gpt4_data.append(img or Spacer(1, 1))
 
@@ -101,11 +101,7 @@ def generate_pdf(task_dict):
             gpt4_data.append(Paragraph(task_description_dict["description_output"],
                                        ParagraphStyle(name="CustomStyle", parent=styles["BodyText"], fontSize=8)))
 
-            table = Table([gpt4_labels, gpt4_data], colWidths=[100, 100, None], rowHeights=[20, 100], hAlign='LEFT')
-            # Vertically center the text in the third column, first row ])
-            table_style = TableStyle([('VALIGN', (2, 0), (2, 0), 'MIDDLE')])
-            table.setStyle(table_style)
-            content.append(table)
+            content.append(Table([gpt4_labels, gpt4_data], colWidths=[133, 133, None], rowHeights=[20, 100], hAlign='LEFT'))
 
 
         # Add a page break between tasks
