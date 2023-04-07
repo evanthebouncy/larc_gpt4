@@ -78,6 +78,25 @@ def nothing_prompt(task):
     prompt = preamble + take_a_guess + "\n\nThe input grid is:\n" + str(input_grid) + "\n\nWhat is the output grid?"
     return prompt 
 
+def io_to_inst_prompt(task):
+    
+    # instruction = "here is the instruction of how to transform the grid: \n"
+    # instruction += task['description']['description_input'] + task['description']['description_output_grid_size'] + task['description']['description_output']
+    
+    input_output_example = "\n\nhere are examples of input grids and its corresponding output grids:\n"
+
+    for example_id in range(len(task['problem']['train'])):
+        train_input = task['problem']['train'][example_id]['input']
+        train_output = task['problem']['train'][example_id]['output']
+
+        input_output_example += "example input grid:\n" + str(train_input) + "\nexample output grid:\n" + str(train_output) + "\n\n"
+
+    input_grid = task['problem']['test'][0]['input']
+
+    prompt = preamble + input_output_example + "\n\nThe input grid is:\n" + str(input_grid) + "\n\nWhat is the output grid?"
+    prompt += "\ngenerate the answer in 2 parts. first, using the given examples, write down the rule of how to transform the input grid into the output grid. second, apply the rule to the given input grid to get the output grid."
+    return prompt 
+
 if __name__ == '__main__':
     import random 
 
@@ -87,13 +106,13 @@ if __name__ == '__main__':
 
     print (len(larc_gpt4))
     
-    full_keys = ['nl_only', 'nl_and_io', 'io_only', 'nothing']
+    full_keys = ['nl_only', 'nl_and_io', 'io_only', 'nothing', 'io_to_inst']
     for _ in range(10000000):
         # pick a random task
         r_id = random.randint(0, len(larc_gpt4)-1)
         task = larc_gpt4[r_id]
         if len(task['gpt4']) < len(full_keys):
-            print (f"task {task['name']} has less than 4 gpt4 responses, try to make it up")
+            print (f"task {task['name']} has less than all the gpt4 responses, try to make it up")
             print (task['gpt4'].keys())
             full_keys_shuffle = copy.deepcopy(full_keys)
             random.shuffle(full_keys_shuffle)
@@ -107,6 +126,8 @@ if __name__ == '__main__':
                         prompt = io_only_prompt(task)
                     elif key == 'nothing':
                         prompt = nothing_prompt(task)
+                    elif key == 'io_to_inst':
+                        prompt = io_to_inst_prompt(task)
                     
                     print (prompt)
 

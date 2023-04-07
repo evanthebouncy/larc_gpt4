@@ -1,14 +1,15 @@
 import json
 
 # open results/nl_only_task_with_gpt4.json
-with open('results/larc_gpt4.json') as json_file:
+with open('results/larc_gpt4_newer.json') as json_file:
     results = json.load(json_file)
 
 def grab_output(gpt4_response):
     try:
-        # parse the content between [[ and ]] for the grid, inclusive
-        gpt4_response_grid = gpt4_response[gpt4_response.find("[[")+2:gpt4_response.find("]]")]
-        # put the [[ and ]] back in, eval it into array
+        # parse the content between [[ and ]] for the grid, inclusive, 
+        # there might be multiple grids, but we only care about the LAST one
+        gpt4_response_grid = gpt4_response.split("[[")[-1]
+        gpt4_response_grid = gpt4_response_grid.split("]]")[0]
         gpt4_response_grid = eval("[[" + gpt4_response_grid + "]]")
         return gpt4_response_grid
     except:
@@ -38,8 +39,8 @@ if __name__ == '__main__':
     for i, task in enumerate(results):
         task_name = task['name']
         task_response = summarize(task)
-        if len(task_response) < 4:
-            print (f"task {task_name} has less than 4 responses ", task_response)
+        if len(task_response) < 5:
+            print (f"task {task_name} has less than 5 responses ", task_response)
             continue
 
         all_tasks.add(task_name)

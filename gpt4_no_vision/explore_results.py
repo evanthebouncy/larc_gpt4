@@ -57,7 +57,7 @@ def make_filter(filter_condition):
 
 def is_complete(task):
     gpt4_results = task['gpt4']
-    return len (gpt4_results) == 4
+    return len (gpt4_results) >= 4
 
 if __name__ == '__main__':
     with open('results/larc_gpt4.json', 'r') as f:
@@ -67,7 +67,7 @@ if __name__ == '__main__':
     filtered_tasks = set()
 
     filter_condition = {'nl_only': True, 'nl_and_io': True, 'io_only': True, 'nothing': True}
-    filter_condition = {'nl_only': True, 'nl_and_io': True, 'io_only': True}
+    filter_condition = {'nl_only': True, 'nl_and_io': True, 'io_only': False}
     
     for task in larc_gpt4:
 
