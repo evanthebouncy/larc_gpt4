@@ -1,7 +1,9 @@
-## LARC dataset 
+## LARC 
 for the original language-complete abstract reasoning corpus (LARC) dataset, go here: https://github.com/samacqua/LARC 
 
 for the paper "communicating natural programs to humans and machines" which LARC is curated, go here: https://arxiv.org/abs/2106.07824
+
+## this repo
 
 GPT4 (language only, no vision) solving LARC tasks. we will update this when gpt4+vision becomes available
 
